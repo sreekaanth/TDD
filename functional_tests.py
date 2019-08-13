@@ -25,12 +25,11 @@ class NewVisitorTest(unittest.TestCase):
         self.assertIn('To-Do',header_text)
         
         #she is invited to enter a to-do item straight away
-        inputbox = self.browser.find_elements_by_id('id_new_item')
+        inputbox = self.browser.find_element_by_id('id_new_item')
         self.assertEqual(
             inputbox.get_attribute('placeholder'),
             'Enter a to-do item'
         )
-
         #She types "Buy Peacock feathers" into a text box (Edith's hobby
         # is tying to fly-fishing lures)
         inputbox.send_keys('Buy peacock feathers')
@@ -39,7 +38,7 @@ class NewVisitorTest(unittest.TestCase):
         inputbox.send_keys(Keys.ENTER)
         time.sleep(1)
         table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_element_by_tag_name('tr')
+        rows = table.find_elements_by_tag_name('tr')
         self.assertTrue(
         any(row.text == '1: Buy peacock feathers' for row in rows),
         "New to-do item did not appear in table"
