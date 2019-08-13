@@ -6,3 +6,4 @@ virtualenv/*
 virtualenv/.*
 virtualenv/.DS_Store
 geckodriver.log
+virtualenv/
