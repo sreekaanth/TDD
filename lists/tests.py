@@ -22,9 +22,24 @@ class HomePageTest(TestCase):
         self.assertTemplateUsed(response,'home.html')
     
     def test_can_save_a_POST_request(self):
-        response=self.client.post('/',data={'item_text':'A new list item'})
+        # response=self.client.post('/',data={'item_text':'A new list item'})
+        # self.assertIn('A new list item', response.content.decode())
+        # self.assertTemplateUsed(response, 'home.html')
+
+        request = HttpRequest()
+        request.method = 'POST'
+        request.POST['item_text'] = 'A new list item'
+
+        response = home_page(request)
+        self.assertEqual(Item.objects.count(),1)
+        new_item = Item.objects.first()
+        self.assertEqual(new_item.text,'A new list item')
         self.assertIn('A new list item', response.content.decode())
-        self.assertTemplateUsed(response, 'home.html')
+        expected_html = render_to_string(
+            'home.html',
+            {'new_item_text': 'A new list item'}
+        )
+        self.assertEqual(response.content.decode(),expected_html)        
         
 class SmokeTest(TestCase):
 
