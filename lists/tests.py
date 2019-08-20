@@ -7,8 +7,7 @@ from django.template.loader import render_to_string
 from django.test import TestCase
 # Create your tests here.
 
-class HomePageTest(TestCase):
-   
+class HomePageTest(TestCase):   
     def test_home_page_returns_correct_html(self):
         response = self.client.get('/')
         html = response.content.decode('utf8')
@@ -21,34 +20,35 @@ class HomePageTest(TestCase):
         response = self.client.get('/')
         self.assertTemplateUsed(response,'home.html')
     
-    def test_can_save_a_POST_request(self):
-        # response=self.client.post('/',data={'item_text':'A new list item'})
-        # self.assertIn('A new list item', response.content.decode())
-        # self.assertTemplateUsed(response, 'home.html')
-
+    def test_home_page_can_save_a_POST_request(self):
         request = HttpRequest()
         request.method = 'POST'
         request.POST['item_text'] = 'A new list item'
-
         response = home_page(request)
         self.assertEqual(Item.objects.count(),1)
         new_item = Item.objects.first()
         self.assertEqual(new_item.text,'A new list item')
 
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/')
-        # self.assertEqual(response['location'], '/')
-        # self.assertIn('A new list item', response.content.decode())
-        # expected_html = render_to_string(
-        #     'home.html',
-        #     {'new_item_text': 'A new list item'}
-        # )
-        # self.assertEqual(response.content.decode(),expected_html)
+        def test_home_page_redirects_after_POST(self):
+            request=HttpRequest()
+            request.method = 'POST'
+            request.POST['item_text'] = 'A new list item'
+            response = home_page(request)
+            self.assertEqual(response.status_code, 302)
+            self.assertEqual(response['location'], '/')        
     
     def test_home_page_only_items_when_necessary(self):
         request = HttpRequest()
         home_page(request)
-        self.assertEqual(Item.objects.count(),0)       
+        self.assertEqual(Item.objects.count(),0)
+    
+    def test_home_page_displays_all_list_items(self):
+        Item.objects.create(text='itemey1')
+        Item.objects.create(text='itemey2')
+        request = HttpRequest()
+        response = home_page(request)
+        self.assertIn('itemey1',response.content.decode())
+        self.assertIn('itemey2',response.content.decode())
         
 class SmokeTest(TestCase):
 
